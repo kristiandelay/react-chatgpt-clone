@@ -190,7 +190,11 @@ function ChatHistory() {
         <textarea
           type="text"
           value={inputValue}
-          onChange={(event) => setInputValue(event.target.value)}
+          onChange={(event) => { 
+            event.target.style.height = 'auto';
+            event.target.style.height = `${Math.min(event.target.scrollHeight, 250)}px`;
+            setInputValue(event.target.value);
+          }}
           disabled={loading}
         />
         {loading && <BouncingDotsLoader />}

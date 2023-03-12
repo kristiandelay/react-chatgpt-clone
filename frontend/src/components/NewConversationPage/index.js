@@ -32,7 +32,16 @@ function NewConversationPage() {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <textarea type="text" value={question}  onChange={(event) => setQuestion(event.target.value)} disabled={loading}  />
+        <textarea
+          type="text" 
+          value={question}
+          onChange={(event) => { 
+            event.target.style.height = 'auto';
+            event.target.style.height = `${Math.min(event.target.scrollHeight, 250)}px`;
+            setQuestion(event.target.value)}
+          }
+          disabled={loading} 
+           />
         {loading && <BouncingDotsLoader />}
         {!loading && <button type="submit">Ask</button>}
        
