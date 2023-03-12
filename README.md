@@ -63,5 +63,9 @@ May this report meet thy approval, my lord, and may this project serve as a shin
 ### Frontend Bugs
 
 - [ ] - Page not automatically scrolling to bottom after response.
+- [ ] - Copy code button broke.
 - [x] - Response message not appending after new question.
 - [ ] - Error handling if database not configured
+
+### Backlog
+- [ ] - update css to render copy code button inside of code block.
