@@ -1,0 +1,67 @@
+{
+	"info": {
+		"_postman_id": "a1b99954-1fce-4814-8eb8-e65b835128c5",
+		"name": "Chatgpt",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20768533"
+	},
+	"item": [
+		{
+			"name": "ask question",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"prompt\": \"can you show me some ways to make my own lanuage model\",\n    \"parentMessageId\": \"chatcmpl-6sHLUQwrvg4q1Jg4E0PZ01vBSANWo\",\n    \"chatId\": \"640a43ebb0760e4c36765d05\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:420/api/chatgpt/question",
+					"host": [
+						"localhost"
+					],
+					"port": "420",
+					"path": [
+						"api",
+						"chatgpt",
+						"question"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "message-history",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "All Chats",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:420/api/chatgpt/history",
+					"host": [
+						"localhost"
+					],
+					"port": "420",
+					"path": [
+						"api",
+						"chatgpt",
+						"history"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
