@@ -138,7 +138,7 @@ function ChatHistory() {
       });
 
       setLastMessageID(response.data.message_id);
-      fetchMessages();
+      await fetchMessages();
       setInputValue("");
       setLoading(false);
     } catch (error) {
