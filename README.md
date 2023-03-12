@@ -25,6 +25,10 @@ For a quick start, you can follow these steps:
 
 By following these steps, you can set up and run the backend component of the ChatGPT clone effectively.
 
+### Backend Bugs
+
+- [ ] 
+
 
 ## Running The Frontend
 
@@ -51,7 +55,13 @@ My most esteemed lord, I humbly come before thee to present tidings of the ChatG
 Such a remarkable feat was accomplished through the skill and dexterity of our most valiant developers, who provided clear and precise instructions to guide ChatGPT towards the intended end. Utilizing its prodigious natural language processing capabilities, ChatGPT generated a wealth of high-quality text-based elements, which offered valuable insights throughout the development process.
 
 However, let it be known that it was the wisdom and cunning of our human developers that made this project possible, directing ChatGPT towards the desired outcome and refining its output until it met their exacting standards.
-
+ 
 Therefore, let us celebrate this remarkable partnership between man and machine, recognizing the unique strengths and contributions of each. Through our mutual collaboration, we have achieved something truly extraordinary, a testament to the boundless power of technology and human innovation working harmoniously together towards a common goal.
 
 May this report meet thy approval, my lord, and may this project serve as a shining example of what can be accomplished when man and machine collaborate in unity and harmony.
+
+### Frontend Bugs
+
+- [ ] - Page not automatically scrolling to bottom after response.
+- [x] - Response message not appending after new question.
+- [ ] - Error handling if database not configured
