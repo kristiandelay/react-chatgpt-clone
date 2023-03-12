@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -11,7 +11,11 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowAltCircleDown} from "@fortawesome/free-regular-svg-icons";
+
 import BouncingDotsLoader from "../BouncingDotsLoader";
+
 
 import "./CopyButton.scss";
 import "./BotIcon.scss";
@@ -92,6 +96,7 @@ function ChatHistory() {
   const [inputValue, setInputValue] = useState("");
   const [lastMessageID, setLastMessageID] = useState("");
   const [loading, setLoading] = useState(false);
+  const container = useRef(null);
 
   const navigate = useNavigate();
 
@@ -146,8 +151,17 @@ function ChatHistory() {
     }
   };
 
+  const Scroll = () => {
+    container.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+  }
+
+  useEffect(() => {
+    Scroll()
+  }, [messages])
+
+
   return (
-    <div>
+    <div ref={container}>
       <h1>Chat History</h1>
       {messages.map((message, index) => (
         <>
@@ -182,6 +196,7 @@ function ChatHistory() {
         {loading && <BouncingDotsLoader />}
         {!loading && <button type="submit">Ask</button>}
       </form>
+      <button style={{ position: 'fixed', bottom: 10, right: 10 }} onClick={Scroll}><FontAwesomeIcon icon={faArrowAltCircleDown} /></button>
     </div>
   );
 }

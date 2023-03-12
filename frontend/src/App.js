@@ -7,7 +7,6 @@ import {
   Navigate
 } from "react-router-dom";
 
-import ScrollButton from "react-scroll-button";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -59,12 +58,6 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
 
-          <ScrollButton
-            behavior={"smooth"}
-            buttonBackgroundColor={"red"}
-            iconType={"arrow-up"}
-            style={{ fontSize: "24px" }}
-          />
         </div>
       </div>
     </Router>
