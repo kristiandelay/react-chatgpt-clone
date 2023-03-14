@@ -20,7 +20,6 @@ const api = new ChatGPTAPI({
 app.use(cors());
 app.use(bodyParser.json());
 
-import retry from 'retry';
 
 // Define the MongoDB connection options
 const mongoOptions = {
