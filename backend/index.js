@@ -6,6 +6,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { ChatGPTAPI } from "chatgpt";
 import mongoose from "mongoose";
+import retry from 'retry';
 import Conversation from "./models/conversationModel.js";
 import Chat from "./models/chatModel.js";
 
@@ -19,16 +20,34 @@ const api = new ChatGPTAPI({
 app.use(cors());
 app.use(bodyParser.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/chatgpt", {
+import retry from 'retry';
+
+// Define the MongoDB connection options
+const mongoOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
-db.once("open", () => {
-  console.log("Connected to MongoDB");
-});
+};
+
+// Function that attempts to connect to MongoDB and retries if it fails
+function connectWithRetry() {
+  const operation = retry.operation();
+  operation.attempt(() => {
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/chatgpt", mongoOptions)
+      .then(() => {
+        console.log("Connected to MongoDB");
+      })
+      .catch((err) => {
+        if (operation.retry(err)) {
+          console.log(`Retrying MongoDB connection in ${operation._timeouts[operation._attempts-1]} ms`);
+          return;
+        }
+        console.error("MongoDB connection error:", err);
+      });
+  });
+}
+
+// Call the function to connect to MongoDB with retry logic
+connectWithRetry();
 
 // API route for handling questions and generating responses
 app.post("/api/chatgpt/question", async (req, res) => {

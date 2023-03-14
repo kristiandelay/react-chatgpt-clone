@@ -21,6 +21,7 @@
     "express": "^4.18.2",
     "mongoose": "^7.0.1",
     "nodemon": "^2.0.21",
-    "react-html-parser": "^2.0.2"
+    "react-html-parser": "^2.0.2",
+    "retry": "^0.13.1"
   }
 }

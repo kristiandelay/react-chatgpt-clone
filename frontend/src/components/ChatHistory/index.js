@@ -112,12 +112,12 @@ function ChatHistory() {
       );
 
       setMessages(response.data);
-      let lastMessageId = null;
+      let messageID = null;
 
       for (const message of response.data) {
-        lastMessageId = message.messageId;
+        messageID = message.messageId;
       }
-      setLastMessageID(lastMessageId);
+      setLastMessageID(messageID);
     } catch (error) {
       navigate(`/chat/`);
 
