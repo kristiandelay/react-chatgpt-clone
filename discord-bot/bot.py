@@ -1,12 +1,13 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 import discord
 from discord.ext import commands
 import aiohttp
 import json
 
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
 
 intents = discord.Intents.default()
 intents.typing = False
@@ -111,4 +112,3 @@ async def chat(ctx, *, prompt: str):
 
 bot_token = os.getenv('BOT_TOKEN')
 bot.run(bot_token)
-# bot.run('MTA4ODM3NjU5OTQ3MDE2MTk2Mg.GG16CS.b-Iej-f9nsQJlM6ehWQkMaMFsoZGnQfyzBP-v8')
