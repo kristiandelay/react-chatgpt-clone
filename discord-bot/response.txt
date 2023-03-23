@@ -1,0 +1,60 @@
+Here's an example of a base class called "BaseController" that both "PlayerController" and "AIController" will derive from in Unity 2D C# wrapped in the namespace "Lunarsoft":
+
+```
+namespace Lunarsoft {
+
+    public class BaseController : MonoBehaviour {
+        
+        protected float moveSpeed = 5f;
+        
+        protected virtual void Move(Vector2 direction) {
+            transform.Translate(direction * moveSpeed * Time.deltaTime);
+        }
+        
+        protected virtual void RotateTowards(Vector2 target) {
+            Vector2 direction = target - (Vector2)transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        }
+    }
+
+    public class PlayerController : BaseController {
+        
+        private void Update() {
+            float horizontalInput = Input.GetAxisRaw("Horizontal");
+            float verticalInput = Input.GetAxisRaw("Vertical");
+            Vector2 direction = new Vector2(horizontalInput, verticalInput).normalized;
+            if (direction.magnitude > 0.1f) {
+                Move(direction);
+                RotateTowards(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            }
+        }
+    }
+    
+    public class AIController : BaseController {
+        
+        private Transform target;
+        
+        private void Start() {
+            // find target or set it to a default location
+            target = GameObject.FindGameObjectWithTag("Player")?.transform ?? transform;
+        }
+        
+        private void Update() {
+            Vector2 direction = (target.position - transform.position).normalized;
+            if (direction.magnitude > 0.1f) {
+                Move(direction);
+                RotateTowards(target.position);
+            }
+        }
+    }
+}
+```
+
+In this example, the "BaseController" class contains some basic functionality for moving and rotating a game object. Both "PlayerController" and "AIController" derive from "BaseController" and add their own specific behavior.
+
+The "PlayerController" class handles input from the player and moves the game object accordingly. It also rotates the game object towards the mouse cursor.
+
+The "AIController" class finds a target game object (in this case, the player) and moves towards it. It also rotates the game object towards the target. Note that this is a very basic AI controller and would need more logic to be useful in a real game. 
+
+I hope this helps!
