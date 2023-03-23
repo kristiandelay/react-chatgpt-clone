@@ -11,6 +11,8 @@ const conversationSchema = new mongoose.Schema({
   promptTokens: Number,
   completionTokens: Number,
   totalTokens: Number,
+  audioName: String,
+  audioData: Buffer,
   choices: [
     {
       text: String,

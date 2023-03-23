@@ -10,9 +10,58 @@ import retry from 'retry';
 import Conversation from "./models/conversationModel.js";
 import Chat from "./models/chatModel.js";
 
+import textToSpeech from "@google-cloud/text-to-speech";
+// import fs from 'fs';
+import fs from 'fs/promises';
+import util from 'util';
+
+import gTTS from 'gtts';
+import md5 from "md5";
+
+// const AWS = require('aws-sdk');
+
+// AWS.config.update({
+//   accessKeyId: 'your_access_key_id',
+//   secretAccessKey: 'your_secret_access_key',
+//   region: 'your_aws_region', // e.g. 'us-west-2'
+// });
+
+// const s3 = new AWS.S3();
+
+
+// async function processMP3File() {
+//   try {
+//     const data = await fs.readFile('./b6e4568bbbd4159a0f312cfb43eaf713.mp3');
+//   } catch (err) {
+//     console.error('Error:', err);
+//   }
+// }
+
+const uploadToS3 = async (url, key) => {
+  const audioResponse = await axios.get(url, { responseType: 'arraybuffer' });
+  const audioBuffer = Buffer.from(audioResponse.data, 'binary');
+
+  const params = {
+    Bucket: 'your_bucket_name',
+    Key: key,
+    Body: audioBuffer,
+    ContentType: 'audio/wav',
+  };
+
+  await s3.upload(params).promise();
+};
+
+// processMP3File();
+
+
+// Creates a client
+const client = new textToSpeech.TextToSpeechClient();
+ 
+
 const app = express();
 const api = new ChatGPTAPI({
   apiKey: process.env.OPENAI_API_KEY,
+  // completionParams: { model: 'gpt-4' },
   debug: true,
 });
 
@@ -48,6 +97,30 @@ function connectWithRetry() {
 // Call the function to connect to MongoDB with retry logic
 connectWithRetry();
 
+async function textToAudio(text = "hello world") {
+  const trimmedText = text ? text.substring(0, 10) : "";
+
+  // Construct the request
+  const request = {
+    input: {text: text},
+    // Select the language and SSML voice gender (optional)
+    voice: {languageCode: 'en-US', ssmlGender: 'NEUTRAL'},
+    // select the type of audio encoding
+    audioConfig: {audioEncoding: 'MP3'},
+  };
+
+  // Performs the text-to-speech request
+  const [response] = await client.synthesizeSpeech(request);
+  // Write the binary audio content to a local file
+  const writeFile = util.promisify(fs.writeFile);
+  await writeFile(`${trimmedText}.mp3`, response.audioContent, 'binary');
+  console.log(`Audio content written to file: ${trimmedText}.mp3`);
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // API route for handling questions and generating responses
 app.post("/api/chatgpt/question", async (req, res) => {
   const prompt = req.body.prompt;
@@ -70,10 +143,28 @@ app.post("/api/chatgpt/question", async (req, res) => {
       chatId = chat._id;
     }
 
-    res.send({
+    // await textToAudio(response.text);
+    var speech = response.text;
+    var gtts = new gTTS(speech, 'en');
+
+    var fileName = response.text ? response.text.substring(0, 8) : "";
+    const hash = md5(fileName);
+    fileName = "generated_voice/" + hash + '.mp3';
+
+    var fileResponse = await gtts.save(fileName);
+
+    await sleep(20000); // Sleep for 20 seconds
+
+    console.log('Text to speech converted!');
+    console.log('fileResponse: ', fileResponse);
+
+    // const buffer = await fs.readFile(fileName);
+    res.type('application/json');
+    res.json({
       message_id: response.id,
       text: response.text,
       parentMessageId,
+      audioName: fileName,
       chatId,
     });
 
@@ -90,6 +181,7 @@ app.post("/api/chatgpt/question", async (req, res) => {
       promptTokens: response.detail.usage.prompt_tokens,
       completionTokens: response.detail.usage.completion_tokens,
       totalTokens: response.detail.usage.total_tokens,
+      audioName: fileName,
       choices: response.detail.choices.map((choice) => {
         return {
           text: choice.text,
@@ -138,6 +230,31 @@ app.get("/api/chatgpt/history", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
+  }
+});
+
+app.post('/uberduck', async (req, res) => {
+  try {
+    const { speech, voice } = req.body;
+    const uuid = await uberduckRequest(speech, voice);
+
+    let status = await uberduckPoll(uuid);
+    while (!status.finished_at) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      status = await uberduckPoll(uuid);
+    }
+
+    if (status.failed_at) {
+      res.status(500).json({ error: 'Failed to generate audio.' });
+    } else {
+      const audioURL = status.path;
+      const s3Key = `${uuid}.wav`; // You can customize the S3 object key as needed
+      await uploadToS3(audioURL, s3Key);
+      res.json({ s3Key });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while processing the request.' });
   }
 });
 
