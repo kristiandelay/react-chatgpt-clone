@@ -3,6 +3,11 @@ from discord.ext import commands
 import aiohttp
 import json
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 intents = discord.Intents.default()
 intents.typing = False
 intents.presences = False
@@ -104,4 +109,6 @@ async def chat(ctx, *, prompt: str):
 #     else:
 #         await ctx.send("There was an error processing your request.")
 
-bot.run('MTA4ODM3NjU5OTQ3MDE2MTk2Mg.GSoObg.pbi9NCJ9on1rHM906BDhZy5hTO93hCHFJobtTo')
+bot_token = os.getenv('BOT_TOKEN')
+bot.run(bot_token)
+# bot.run('MTA4ODM3NjU5OTQ3MDE2MTk2Mg.GG16CS.b-Iej-f9nsQJlM6ehWQkMaMFsoZGnQfyzBP-v8')
